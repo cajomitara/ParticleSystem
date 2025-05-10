@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             picDisplay = new PictureBox();
+            timer1 = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)picDisplay).BeginInit();
             SuspendLayout();
             // 
@@ -39,6 +41,13 @@
             picDisplay.Size = new Size(885, 515);
             picDisplay.TabIndex = 0;
             picDisplay.TabStop = false;
+            picDisplay.MouseMove += picDisplay_MouseMove;
+            // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Interval = 40;
+            timer1.Tick += timer1_Tick;
             // 
             // Form1
             // 
@@ -46,8 +55,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(909, 539);
             Controls.Add(picDisplay);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "Form1";
-            Text = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Система частиц";
             ((System.ComponentModel.ISupportInitialize)picDisplay).EndInit();
             ResumeLayout(false);
         }
@@ -55,5 +66,6 @@
         #endregion
 
         private PictureBox picDisplay;
+        private System.Windows.Forms.Timer timer1;
     }
 }
