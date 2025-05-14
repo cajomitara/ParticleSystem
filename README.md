@@ -1,2 +1,2 @@
-# H1 Последняя лабораторная работа на языке ![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white) <br>
+# Последняя лабораторная работа на языке ![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white) <br>
   Ветка master содержит саму лабораторную работу, а ветка game – игру, которая выступает в качестве подтверждения того, что я достоин получить автомат :D
