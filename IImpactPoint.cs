@@ -103,4 +103,38 @@ namespace ParticleSystem
                );
         }
     }
+
+    public class TeleportPoint : IImpactPoint
+    {
+        public float ExitX;
+        public float ExitY;
+        public int Radius = 50;
+        public float DirectionAngle;
+
+        public override void ImpactParticle(Particle particle)
+        {
+            float dx = X - particle.X;
+            float dy = Y - particle.Y;
+            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance + particle.Radius < Radius)
+            {
+                particle.X = ExitX + Radius;
+                particle.Y = ExitY + Radius;
+
+                float speed = (float)Math.Sqrt(particle.SpeedX * particle.SpeedX + particle.SpeedY * particle.SpeedY);
+                particle.SpeedX = (float)Math.Cos(DirectionAngle * Math.PI / 180) * speed;
+                particle.SpeedY = -(float)Math.Sin(DirectionAngle * Math.PI / 180) * speed;
+            }
+        }
+
+        public override void Render(Graphics g)
+        {
+            g.DrawEllipse(new Pen(Color.Blue), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            g.DrawEllipse(new Pen(Color.Blue), ExitX - Radius, ExitY - Radius, Radius * 2, Radius * 2);
+
+            g.DrawLine(new Pen(Color.Red), X, Y, ExitX, ExitY);
+        }
+    }
+
 }

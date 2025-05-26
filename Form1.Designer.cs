@@ -38,6 +38,7 @@
             label2 = new Label();
             tbGraviton2 = new TrackBar();
             label3 = new Label();
+            comboBox1 = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)picDisplay).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbDirection).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tbGraviton1).BeginInit();
@@ -51,6 +52,7 @@
             picDisplay.Size = new Size(885, 515);
             picDisplay.TabIndex = 0;
             picDisplay.TabStop = false;
+            picDisplay.MouseClick += picDisplay_MouseClick;
             picDisplay.MouseMove += picDisplay_MouseMove;
             // 
             // timer1
@@ -124,11 +126,22 @@
             label3.Text = "Сила второго\r\nгравитона";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // comboBox1
+            // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "1", "2", "3", "4" });
+            comboBox1.Location = new Point(929, 269);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(151, 28);
+            comboBox1.TabIndex = 5;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1161, 539);
+            Controls.Add(comboBox1);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -160,5 +173,6 @@
         private Label label2;
         private TrackBar tbGraviton2;
         private Label label3;
+        private ComboBox comboBox1;
     }
 }

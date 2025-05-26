@@ -5,8 +5,10 @@ namespace ParticleSystem
         List<Emitter> emitters = new List<Emitter>();
         Emitter emitter;
 
-        GravityPoint point1; // добавил поле под первую точку
-        GravityPoint point2; // добавил поле под вторую точку
+        GravityPoint point1;
+        GravityPoint point2;
+
+        TeleportPoint teleport;
 
         public Form1()
         {
@@ -29,9 +31,11 @@ namespace ParticleSystem
                 Y = picDisplay.Height / 2,
             };
 
+            teleport = new TeleportPoint();
+            emitter.impactPoints.Add(teleport);
+
             emitters.Add(emitter);
 
-            // привязываем гравитоны к полям
             point1 = new GravityPoint
             {
                 X = picDisplay.Width / 2 + 100,
@@ -43,7 +47,6 @@ namespace ParticleSystem
                 Y = picDisplay.Height / 2,
             };
 
-            // привязываем поля к эмиттеру
             emitter.impactPoints.Add(point1);
             emitter.impactPoints.Add(point2);
         }
@@ -87,6 +90,20 @@ namespace ParticleSystem
         private void tbGravitation2_Scroll(object sender, EventArgs e)
         {
             point2.Power = tbGraviton2.Value;
+        }
+
+        private void picDisplay_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                teleport.X = e.X;
+                teleport.Y = e.Y;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                teleport.ExitX = e.X;
+                teleport.ExitY = e.Y;
+            }
         }
     }
 }
