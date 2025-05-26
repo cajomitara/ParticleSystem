@@ -48,7 +48,7 @@
             // 
             picDisplay.Location = new Point(12, 12);
             picDisplay.Name = "picDisplay";
-            picDisplay.Size = new Size(885, 515);
+            picDisplay.Size = new Size(885, 637);
             picDisplay.TabIndex = 0;
             picDisplay.TabStop = false;
             picDisplay.MouseMove += picDisplay_MouseMove;
@@ -128,7 +128,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1161, 539);
+            ClientSize = new Size(1161, 661);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);

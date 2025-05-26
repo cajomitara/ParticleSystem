@@ -54,7 +54,7 @@ namespace ParticleSystem
 
             using (var g = Graphics.FromImage(picDisplay.Image))
             {
-                g.Clear(Color.Black);
+                g.Clear(Color.White);
                 emitter.Render(g);
             }
 
