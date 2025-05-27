@@ -1,6 +1,7 @@
 ﻿using ParticleSystem;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -137,8 +138,9 @@ namespace ParticleSystem
     {
         public int Count = 0;
         public int Radius = 30;
-        private Color baseColor = Color.White;
-        private Color targetColor = Color.Green;
+        public float MaxCounter = 5000.0f;
+        public Color baseColor = Color.White;
+        public Color targetColor = Color.Green;
 
         public override void ImpactParticle(Particle particle)
         {
@@ -155,7 +157,7 @@ namespace ParticleSystem
 
         public override void Render(Graphics g)
         {
-            float saturation = Math.Min(1.0f, Count / 5000.0f);
+            float saturation = Math.Min(1.0f, Count / MaxCounter);
             Color color = InterpolateColor(baseColor, targetColor, saturation);
 
             g.FillEllipse(new SolidBrush(color), X - Radius, Y - Radius, Radius * 2, Radius * 2);
@@ -215,7 +217,65 @@ namespace ParticleSystem
 
         public override void Render(Graphics g)
         {
+            g.FillEllipse(new SolidBrush(Color.SkyBlue), X - Radius, Y - Radius, Radius * 2, Radius * 2);
             g.DrawEllipse(new Pen(Color.FromArgb(100, Color.Blue), 2), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            g.DrawEllipse(new Pen(Color.FromArgb(200, 80, 160, 255), 3), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+        }
+    }
+    public class RadarArea : IImpactPoint
+    {
+        public int Radius = 100;
+        public int ParticlesInArea = 0;
+        private Color _color = Color.Lime;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                Pen = new Pen(value, 2);
+            }
+        }
+        public Pen Pen = new Pen(Color.Lime, 2);
+
+        public override void ImpactParticle(Particle particle)
+        {
+            float dx = X - particle.X;
+            float dy = Y - particle.Y;
+            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance <= Radius + particle.Radius)
+            {
+                if (particle is ParticleColorful colorfulParticle)
+                {
+                    colorfulParticle.FromColor = Color;
+                    colorfulParticle.ToColor = Color.FromArgb(0, Color);
+                }
+                ParticlesInArea++;
+            }
+        }
+
+        public override void Render(Graphics g)
+        {
+            g.FillEllipse(new SolidBrush(Color.FromArgb(80, Color)), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+
+            g.DrawEllipse(Pen, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+
+            var format = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString(
+                ParticlesInArea.ToString(),
+                new Font("Arial", 14, FontStyle.Bold),
+                Brushes.White,
+                new PointF(X, Y),
+                format
+            );
+
+            ParticlesInArea = 0;
         }
     }
 }

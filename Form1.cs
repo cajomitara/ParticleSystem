@@ -5,10 +5,10 @@ namespace ParticleSystem
         List<Emitter> emitters = new List<Emitter>();
         Emitter emitter;
 
-        TeleportPoint teleport;
-        CounterPoint counter;
-        BounceArea bounce;
-
+        TeleportPoint teleport = new TeleportPoint();
+        CounterPoint counter = new CounterPoint();
+        BounceArea bounce = new BounceArea();
+        RadarArea radar = new RadarArea();
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +36,12 @@ namespace ParticleSystem
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            foreach (var particle in emitter.particles.OfType<ParticleColorful>())
+            {
+                particle.FromColor = emitter.ColorFrom;
+                particle.ToColor = emitter.ColorTo;
+            }
+
             emitter.UpdateState();
 
             using (var g = Graphics.FromImage(picDisplay.Image))
@@ -78,9 +84,8 @@ namespace ParticleSystem
             {
                 if (comboBox1.Text == "Телепорты")
                 {
-                    if (teleport == null)
+                    if (!emitter.impactPoints.Contains(teleport))
                     {
-                        teleport = new TeleportPoint();
                         emitter.impactPoints.Add(teleport);
                     }
 
@@ -89,9 +94,8 @@ namespace ParticleSystem
                 }
                 else if (comboBox1.Text == "Точка-счётчик")
                 {
-                    if (counter == null)
+                    if (!emitter.impactPoints.Contains(counter))
                     {
-                        counter = new CounterPoint();
                         emitter.impactPoints.Add(counter);
                     }
 
@@ -100,9 +104,8 @@ namespace ParticleSystem
                 }
                 else if (comboBox1.Text == "Области отскока")
                 {
-                    if (bounce == null)
+                    if (!emitter.impactPoints.Contains(bounce))
                     {
-                        bounce = new BounceArea();
                         emitter.impactPoints.Add(bounce);
                     }
 
@@ -111,17 +114,21 @@ namespace ParticleSystem
                 }
                 else if (comboBox1.Text == "Радар")
                 {
+                    if (!emitter.impactPoints.Contains(radar))
+                    {
+                        emitter.impactPoints.Add(radar);
+                    }
 
+                    radar.X = e.X;
+                    radar.Y = e.Y;
                 }
-
             }
             else if (e.Button == MouseButtons.Right)
             {
                 if (comboBox1.Text == "Телепорты")
                 {
-                    if (teleport == null)
+                    if (!emitter.impactPoints.Contains(teleport))
                     {
-                        teleport = new TeleportPoint();
                         emitter.impactPoints.Add(teleport);
                     }
                     teleport.ExitX = e.X;
@@ -129,32 +136,118 @@ namespace ParticleSystem
                 }
                 else if (comboBox1.Text == "Точка-счётчик")
                 {
-                    if (counter != null)
+                    if (!emitter.impactPoints.Contains(counter))
                     {
                         float dx = counter.X - e.X;
                         float dy = counter.Y - e.Y;
                         if (dx * dx + dy * dy <= counter.Radius * counter.Radius)
                         {
                             emitter.impactPoints.Remove(counter);
-                            counter = null;
                         }
                     }
                 }
                 else if (comboBox1.Text == "Области отскока")
                 {
-
+                    if (!emitter.impactPoints.Contains(bounce))
+                    {
+                        float dx = bounce.X - e.X;
+                        float dy = bounce.Y - e.Y;
+                        if (dx * dx + dy * dy <= bounce.Radius * bounce.Radius)
+                        {
+                            emitter.impactPoints.Remove(bounce);
+                        }
+                    }
                 }
                 else if (comboBox1.Text == "Радар")
                 {
-
+                    if (!emitter.impactPoints.Contains(radar))
+                    {
+                        float dx = radar.X - e.X;
+                        float dy = radar.Y - e.Y;
+                        if (dx * dx + dy * dy <= radar.Radius * radar.Radius)
+                        {
+                            emitter.impactPoints.Remove(radar);
+                        }
+                    }
                 }
-
             }
         }
         private void picDisplay_MouseWheel(object sender, MouseEventArgs e)
         {
             int delta = e.Delta > 0 ? 5 : -5;
             bounce.Radius = Math.Clamp(bounce.Radius + delta, 10, 200);
+        }
+
+        private void tbTeleportSize_Scroll(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(teleport))
+            {
+                teleport.Radius = tbTeleportSize.Value;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            foreach (var obj in emitter.impactPoints.ToList())
+            {
+                emitter.impactPoints.Remove(obj);
+            }
+        }
+
+        private void tbRadarSize_Scroll(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Radius = tbRadarSize.Value;
+            }
+        }
+
+        private void pbRed_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.Red;
+            }
+        }
+
+        private void pbGreen_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.Lime;
+            }
+        }
+
+        private void pbBlue_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.SkyBlue;
+            }
+        }
+
+        private void pbPink_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.DeepPink;
+            }
+        }
+
+        private void pbGrey_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.DarkGray;
+            }
+        }
+
+        private void pbOrange_Click(object sender, EventArgs e)
+        {
+            if (emitter.impactPoints.Contains(radar))
+            {
+                radar.Color = Color.Orange;
+            }
         }
     }
 }
