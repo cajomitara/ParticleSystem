@@ -119,22 +119,103 @@ namespace ParticleSystem
 
             if (distance + particle.Radius < Radius)
             {
-                particle.X = ExitX + Radius;
-                particle.Y = ExitY + Radius;
-
-                float speed = (float)Math.Sqrt(particle.SpeedX * particle.SpeedX + particle.SpeedY * particle.SpeedY);
-                particle.SpeedX = (float)Math.Cos(DirectionAngle * Math.PI / 180) * speed;
-                particle.SpeedY = -(float)Math.Sin(DirectionAngle * Math.PI / 180) * speed;
+                particle.X = ExitX;
+                particle.Y = ExitY;
             }
         }
 
         public override void Render(Graphics g)
         {
-            g.DrawEllipse(new Pen(Color.Blue), X - Radius, Y - Radius, Radius * 2, Radius * 2);
-            g.DrawEllipse(new Pen(Color.Blue), ExitX - Radius, ExitY - Radius, Radius * 2, Radius * 2);
+            g.DrawEllipse(new Pen(Color.DeepSkyBlue), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            g.DrawEllipse(new Pen(Color.OrangeRed), ExitX - Radius, ExitY - Radius, Radius * 2, Radius * 2);
 
             g.DrawLine(new Pen(Color.Red), X, Y, ExitX, ExitY);
         }
     }
 
+    public class CounterPoint : IImpactPoint
+    {
+        public int Count = 0;
+        public int Radius = 30;
+        private Color baseColor = Color.White;
+        private Color targetColor = Color.Green;
+
+        public override void ImpactParticle(Particle particle)
+        {
+            float dx = X - particle.X;
+            float dy = Y - particle.Y;
+            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance <= Radius + particle.Radius)
+            {
+                particle.Life = 0;
+                Count++;
+            }
+        }
+
+        public override void Render(Graphics g)
+        {
+            float saturation = Math.Min(1.0f, Count / 5000.0f);
+            Color color = InterpolateColor(baseColor, targetColor, saturation);
+
+            g.FillEllipse(new SolidBrush(color), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            g.DrawEllipse(new Pen(Color.Black, 2), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+
+            var format = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString(
+                Count.ToString(),
+                new Font("Arial", 12, FontStyle.Bold),
+                Brushes.White,
+                new PointF(X, Y),
+                format
+            );
+        }
+
+        private Color InterpolateColor(Color start, Color end, float ratio)
+        {
+            int r = (int)(start.R * (1 - ratio) + end.R * ratio);
+            int g = (int)(start.G * (1 - ratio) + end.G * ratio);
+            int b = (int)(start.B * (1 - ratio) + end.B * ratio);
+
+            return Color.FromArgb(
+                Math.Clamp(r, 0, 255),
+                Math.Clamp(g, 0, 255),
+                Math.Clamp(b, 0, 255)
+            );
+        }
+    }
+    public class BounceArea : IImpactPoint
+    {
+        public int Radius = 50;
+
+        public override void ImpactParticle(Particle particle)
+        {
+            float dx = X - particle.X;
+            float dy = Y - particle.Y;
+            float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance <= Radius + particle.Radius)
+            {
+                float nx = dx / distance;
+                float ny = dy / distance;
+
+                particle.X = X - nx * (Radius + particle.Radius);
+                particle.Y = Y - ny * (Radius + particle.Radius);
+
+                float dot = particle.SpeedX * nx + particle.SpeedY * ny;
+                particle.SpeedX -= 2 * dot * nx;
+                particle.SpeedY -= 2 * dot * ny;
+            }
+        }
+
+        public override void Render(Graphics g)
+        {
+            g.DrawEllipse(new Pen(Color.FromArgb(100, Color.Blue), 2), X - Radius, Y - Radius, Radius * 2, Radius * 2);
+        }
+    }
 }

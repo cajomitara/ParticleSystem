@@ -5,18 +5,18 @@ namespace ParticleSystem
         List<Emitter> emitters = new List<Emitter>();
         Emitter emitter;
 
-        GravityPoint point1;
-        GravityPoint point2;
-
         TeleportPoint teleport;
+        CounterPoint counter;
+        BounceArea bounce;
 
         public Form1()
         {
             InitializeComponent();
-            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
+            comboBox1.SelectedIndex = 0;
 
-            tbGraviton1.Value = 100;
-            tbGraviton2.Value = 100;
+            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
+            picDisplay.MouseWheel += picDisplay_MouseWheel;
+
 
             emitter = new Emitter
             {
@@ -31,24 +31,7 @@ namespace ParticleSystem
                 Y = picDisplay.Height / 2,
             };
 
-            teleport = new TeleportPoint();
-            emitter.impactPoints.Add(teleport);
-
             emitters.Add(emitter);
-
-            point1 = new GravityPoint
-            {
-                X = picDisplay.Width / 2 + 100,
-                Y = picDisplay.Height / 2,
-            };
-            point2 = new GravityPoint
-            {
-                X = picDisplay.Width / 2 - 100,
-                Y = picDisplay.Height / 2,
-            };
-
-            emitter.impactPoints.Add(point1);
-            emitter.impactPoints.Add(point2);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -71,9 +54,6 @@ namespace ParticleSystem
                 emitter.MousePositionX = e.X;
                 emitter.MousePositionY = e.Y;
             }
-
-            point2.X = e.X;
-            point2.Y = e.Y;
         }
 
         private void tbDirection_Scroll(object sender, EventArgs e)
@@ -84,26 +64,97 @@ namespace ParticleSystem
 
         private void tbGraviton1_Scroll(object sender, EventArgs e)
         {
-            point1.Power = tbGraviton1.Value;
+
         }
 
         private void tbGravitation2_Scroll(object sender, EventArgs e)
         {
-            point2.Power = tbGraviton2.Value;
+
         }
 
         private void picDisplay_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                teleport.X = e.X;
-                teleport.Y = e.Y;
+                if (comboBox1.Text == "Телепорты")
+                {
+                    if (teleport == null)
+                    {
+                        teleport = new TeleportPoint();
+                        emitter.impactPoints.Add(teleport);
+                    }
+
+                    teleport.X = e.X;
+                    teleport.Y = e.Y;
+                }
+                else if (comboBox1.Text == "Точка-счётчик")
+                {
+                    if (counter == null)
+                    {
+                        counter = new CounterPoint();
+                        emitter.impactPoints.Add(counter);
+                    }
+
+                    counter.X = e.X;
+                    counter.Y = e.Y;
+                }
+                else if (comboBox1.Text == "Области отскока")
+                {
+                    if (bounce == null)
+                    {
+                        bounce = new BounceArea();
+                        emitter.impactPoints.Add(bounce);
+                    }
+
+                    bounce.X = e.X;
+                    bounce.Y = e.Y;
+                }
+                else if (comboBox1.Text == "Радар")
+                {
+
+                }
+
             }
             else if (e.Button == MouseButtons.Right)
             {
-                teleport.ExitX = e.X;
-                teleport.ExitY = e.Y;
+                if (comboBox1.Text == "Телепорты")
+                {
+                    if (teleport == null)
+                    {
+                        teleport = new TeleportPoint();
+                        emitter.impactPoints.Add(teleport);
+                    }
+                    teleport.ExitX = e.X;
+                    teleport.ExitY = e.Y;
+                }
+                else if (comboBox1.Text == "Точка-счётчик")
+                {
+                    if (counter != null)
+                    {
+                        float dx = counter.X - e.X;
+                        float dy = counter.Y - e.Y;
+                        if (dx * dx + dy * dy <= counter.Radius * counter.Radius)
+                        {
+                            emitter.impactPoints.Remove(counter);
+                            counter = null;
+                        }
+                    }
+                }
+                else if (comboBox1.Text == "Области отскока")
+                {
+
+                }
+                else if (comboBox1.Text == "Радар")
+                {
+
+                }
+
             }
+        }
+        private void picDisplay_MouseWheel(object sender, MouseEventArgs e)
+        {
+            int delta = e.Delta > 0 ? 5 : -5;
+            bounce.Radius = Math.Clamp(bounce.Radius + delta, 10, 200);
         }
     }
 }
